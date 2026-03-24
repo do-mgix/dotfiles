@@ -1,0 +1,17 @@
+[volume-pulseaudio]
+command=$SCRIPT_DIR/volume-pulseaudio
+interval=once
+signal=1
+# Formato longo (exibido sempre que possível)
+LONG_FORMAT="${SYMB} ${VOL}%"
+# Formato curto (exibido se houver pouco espaço)
+SHORT_FORMAT="${VOL}%"
+# Símbolos opcionais (FontAwesome)
+AUDIO_HIGH_SYMBOL=' '
+AUDIO_MED_THRESH=50
+AUDIO_MED_SYMBOL=' '
+AUDIO_LOW_THRESH=0
+AUDIO_LOW_SYMBOL=' '
+# Cores
+DEFAULT_COLOR="#ffffff"
+MUTED_COLOR="#a0a0a0"   
