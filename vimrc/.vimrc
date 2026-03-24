@@ -22,16 +22,35 @@ xnoremap p "_dP
 
 "	inicialização
 
-" Autocomando para abrir o Netrw ao iniciar o Vim sem arquivos
-autocmd VimEnter * if argc() == 0 | execute 'Explore' | endif
+function! s:goyo_enter()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status off
+    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+  endif
+  set noshowmode
+  set noshowcmd
+  set scrolloff=999
+  Limelight
+endfunction
 
-" Autocomando para abrir o Netrw quando o último buffer for fechado
-autocmd BufEnter * if winnr('$') == 1 && bufname('$') == '' | execute 'Explore' | endif
+function! s:goyo_leave()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status on
+    silent !tmux resize-pane -Z
+  endif
+  set showmode
+  set showcmd
+  set scrolloff=5
+  Limelight!
+endfunction
 
-"Goyo
-autocmd VimEnter * if argc() == 0 && &buftype == '' | Goyo | endif
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 "	estilo
+
+set background=dark
+let g:limelight_conceal_ctermfg = 238
 
 " remove o banner de cabeçalho para mais espaço
 let g:netrw_banner = 0
@@ -74,6 +93,9 @@ nnoremap <leader>b :Buffers<CR>
 
 "sair"
 nnoremap <leader>q :bd<CR>   
+
+"goyo"
+nnoremap <leader>g :Goyo<CR>   
 
 "sair"
 nnoremap <leader>t :termi<CR>   
