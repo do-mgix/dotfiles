@@ -1,7 +1,7 @@
 #!/bin/bash
 # Configurações
 MAX_VOL=100
-STEP=5
+STEP=1
 APP_ID="VolumeOSD"
 
 case "$1" in
@@ -29,7 +29,7 @@ if [ "$MUTE" = "yes" ]; then
     MSG="Mudo"
 else
     BAR_VALUE=$VOL
-    MSG="${VOL}%"
+    MSG="${VOL}"
 fi
 
 # Notificação minimalista (sem ícone, sem urgência variável)

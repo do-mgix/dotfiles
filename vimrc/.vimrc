@@ -1,10 +1,16 @@
 
 "	configs 	"
 
+" Ativa a quebra de linha visual
+set wrap
+
+" Garante que a quebra ocorra entre as palavras, não no meio delas
+set linebreak
+
 "permite navegação livre no arquivo"
 set virtualedit=onemore
 
-""ativar área de transferência""
+"ativar área de transferência
 set clipboard=unnamedplus
 
 "forçar visualização cortada (evita @)"
@@ -48,7 +54,6 @@ autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 "	estilo
-
 set background=dark
 let g:limelight_conceal_ctermfg = 238
 
@@ -77,6 +82,9 @@ highlight SpellLocal cterm=NONE ctermfg=NONE gui=NONE guisp=NONE
 "nnoremap <silent> j gj
 "nnoremap <silent> k gk   
 
+"	caracteres especiais 
+inoremap -- —
+
 "	atalhos		"
 
 "leader vira espaço"
@@ -92,7 +100,10 @@ nnoremap <leader>l :Lines<CR>
 nnoremap <leader>b :Buffers<CR>   
 
 "sair"
-nnoremap <leader>q :bd<CR>   
+nnoremap <leader>q :Explore<CR>   
+
+"source"
+nnoremap <leader>r :source %<CR>   
 
 "goyo"
 nnoremap <leader>g :Goyo<CR>   
@@ -109,7 +120,7 @@ call plug#begin()  " Ou call plug#begin('~/.vim/plugged')
 	Plug 'tpope/vim-fugitive'
 	Plug 'junegunn/goyo.vim'
 	Plug 'junegunn/limelight.vim'
-	Plug 'hardselius/warlock'
+	Plug 'catppuccin/vim', { 'as': 'catppuccin' }	
 
 call plug#end()     
 
