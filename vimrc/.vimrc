@@ -138,4 +138,10 @@ set belloff+=ctrlg
 "autocompletion ligada ao abrir o vim
 let g:mucomplete#enable_auto_at_startup = 1
 
+"browser-sync: :Serve em html, css e js
+augroup browsersync
+	autocmd!
+	autocmd FileType html,css,javascript command! -buffer Serve :Dispatch browser-sync start --server --files "*.html, *.css, *.js"
+augroup END
+
 
