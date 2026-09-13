@@ -137,6 +137,8 @@ set shortmess+=c
 set belloff+=ctrlg
 "autocompletion ligada ao abrir o vim
 let g:mucomplete#enable_auto_at_startup = 1
+"tab escreve a opção do menu: a primeira, ou a escolhida com as setas
+imap <expr> <Tab> pumvisible() ? (complete_info(['selected']).selected == -1 ? "\<C-n>\<C-y>" : "\<C-y>") : "\<Plug>(MUcompleteFwd)"
 
 "browser-sync: :Serve em html, css e js
 augroup browsersync
