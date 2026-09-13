@@ -112,7 +112,7 @@ nnoremap <leader>g :Goyo<CR>
 nnoremap <leader>t :termi<CR>   
 
 "plugins"
-call plug#begin()  " Ou call plug#begin('~/.vim/plugged')
+call plug#begin('~/.vim/plugged')
 
 	" Lista de plugins
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -120,8 +120,22 @@ call plug#begin()  " Ou call plug#begin('~/.vim/plugged')
 	Plug 'tpope/vim-fugitive'
 	Plug 'junegunn/goyo.vim'
 	Plug 'junegunn/limelight.vim'
-	Plug 'catppuccin/vim', { 'as': 'catppuccin' }	
+	Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+	Plug 'lifepillar/vim-mucomplete'
+	Plug 'tpope/vim-dispatch'
+	Plug 'romainl/vim-qf'
+	Plug 'Yggdroot/indentLine'
+	Plug 'tpope/vim-sleuth'
+	Plug 'alvan/vim-closetag'
 
-call plug#end()     
+call plug#end()
+
+"mucomplete: exige menuone no completeopt
+set completeopt+=menuone,noselect
+set shortmess+=c
+"sem bipe durante a completação
+set belloff+=ctrlg
+"autocompletion ligada ao abrir o vim
+let g:mucomplete#enable_auto_at_startup = 1
 
 
