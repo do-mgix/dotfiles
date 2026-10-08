@@ -77,8 +77,9 @@ bindsym XF86AudioMute exec --no-startup-id .config/i3/scripts/vol_notify.sh togg
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
 # Controle de Brilho
-bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
-bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
+# Abaixo do mínimo do backlight, continua escurecendo pelo fator do xrandr (<= 1)
+bindsym XF86MonBrightnessDown exec --no-startup-id ~/dotfiles/i3/scripts/brilho.sh down
+bindsym XF86MonBrightnessUp exec --no-startup-id ~/dotfiles/i3/scripts/brilho.sh up
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
