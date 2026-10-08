@@ -10,6 +10,10 @@ PASSO_FATOR=0.05
 FATOR_MIN=0.05
 APP_ID="BrilhoOSD"
 
+# Descarta repetições da tecla enquanto outra execução ainda roda (ver volume.sh)
+exec 9>"${XDG_RUNTIME_DIR:-/tmp}/brilho-osd.lock"
+flock -n 9 || exit 0
+
 fator=$(xrandr --verbose | awk -v s="$SAIDA" '$1==s {achou=1} achou && /Brightness:/ {print $2; exit}')
 fator=${fator:-1}
 luz=$(brightnessctl get)

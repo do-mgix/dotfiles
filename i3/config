@@ -66,13 +66,11 @@ exec_always .config/i3/scripts/play-sfx.sh .config/i3/sounds/$sound_theme/startu
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id .config/i3/scripts/vol_notify.sh up
-#, exec --no-startup-id sh -c '.config/i3/scripts/play-sfx.sh .config/i3/sounds/playstation/normal_volume.mp3 $mpg_volume false'
+bindsym XF86AudioRaiseVolume exec --no-startup-id ~/dotfiles/i3/scripts/volume.sh up $sound_theme
 
-bindsym XF86AudioLowerVolume exec --no-startup-id .config/i3/scripts/vol_notify.sh down
-#, exec --no-startup-id sh -c '.config/i3/scripts/play-sfx.sh .config/i3/sounds/playstation/normal_volume.mp3 $mpg_volume false'
+bindsym XF86AudioLowerVolume exec --no-startup-id ~/dotfiles/i3/scripts/volume.sh down $sound_theme
 
-bindsym XF86AudioMute exec --no-startup-id .config/i3/scripts/vol_notify.sh toggle
+bindsym XF86AudioMute exec --no-startup-id ~/dotfiles/i3/scripts/volume.sh toggle
 
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
