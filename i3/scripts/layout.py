@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Salva e restaura a disposição de janelas do workspace atual do i3.
 
-Uso: layout.py save | load <id> | delete | install
+Uso: layout.py save | load <id> | delete | flush | move | install
 
 Cada layout guarda a árvore do workspace (splits, abas, tamanhos e janelas
 flutuantes) e, para cada janela, o comando que a abre e o diretório onde
@@ -9,7 +9,9 @@ rodava. Terminais (Alacritty) guardam o diretório do shell.
 
 Os comandos aparecem no rofi (drun) como entradas .desktop: "Save Workspace
 Layout", "Delete Workspace Layout" e um "Load Layout: <nome> (#id)" por
-layout salvo.
+layout salvo. Também há "Flush Workspace", que fecha todas as janelas do
+workspace atual, e "Move Workspace", que esvazia o workspace escolhido e leva
+para ele o atual, com a mesma disposição.
 
 Para carregar, o i3 cria placeholders com append_layout e os programas são
 abertos um de cada vez, na ordem da árvore: o i3 encaixa cada janela nova no
@@ -242,6 +244,8 @@ def escrever_desktop(nome_arquivo, nome, args):
 def instalar():
     escrever_desktop("i3-layout-save.desktop", "Save Workspace Layout", "save")
     escrever_desktop("i3-layout-delete.desktop", "Delete Workspace Layout", "delete")
+    escrever_desktop("i3-layout-flush.desktop", "Flush Workspace", "flush")
+    escrever_desktop("i3-layout-move.desktop", "Move Workspace", "move")
 
 
 def layouts_salvos():
@@ -275,6 +279,45 @@ def salvar():
     avisar(f"Salvo: {nome} (#{id_}), {len(apps)} janela(s)")
 
 
+def limpar(nome):
+    """Fecha as janelas (e restos de placeholders) do workspace e espera sumirem."""
+    ws = lambda: workspace(nome) or {"type": "workspace"}
+    for f in folhas(ws()):
+        i3(f"[con_id={f['id']}] kill")
+    prazo = time.time() + ESPERA_FECHAR
+    while list(folhas(ws())):
+        if time.time() > prazo:
+            return False
+        time.sleep(0.2)
+    return True
+
+
+def esvaziar():
+    nome = nome_focado()
+    if not limpar(nome):
+        avisar(f"Alguma janela do workspace {nome} não fechou")
+
+
+def mover():
+    origem = nome_focado()
+    outros = [w["name"] for w in json.loads(i3("-t", "get_workspaces")) if w["name"] != origem]
+    destino = rofi(f"Mover {origem} para", outros)
+    if not destino or destino == origem:
+        return
+    if not limpar(destino):
+        avisar(f"Alguma janela do workspace {destino} não fechou; nada foi movido")
+        return
+    ws = workspace(origem)
+    alvo = destino.replace('"', '\\"')
+    # Mover o próprio workspace faz o i3 embrulhar os filhos num container
+    # e levar a disposição inteira; as flutuantes vão uma a uma
+    if ws.get("nodes"):
+        i3(f'[con_id={ws["id"]}] move container to workspace "{alvo}"')
+    for flutuante in ws.get("floating_nodes", []):
+        i3(f'[con_id={flutuante["id"]}] move container to workspace "{alvo}"')
+    i3(f'workspace "{alvo}"')
+
+
 def carregar(id_):
     arquivo = LAYOUTS / f"{id_}.json"
     if not arquivo.exists():
@@ -286,15 +329,9 @@ def carregar(id_):
     nome = nome_focado()
     ws = lambda: workspace(nome) or {"type": "workspace"}
 
-    # Limpa o workspace: fecha janelas e restos de placeholders
-    for f in folhas(ws()):
-        i3(f"[con_id={f['id']}] kill")
-    prazo = time.time() + ESPERA_FECHAR
-    while list(folhas(ws())):
-        if time.time() > prazo:
-            avisar("Alguma janela não fechou; layout não carregado")
-            return
-        time.sleep(0.2)
+    if not limpar(nome):
+        avisar("Alguma janela não fechou; layout não carregado")
+        return
 
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
         tmp.write("\n".join(json.dumps(no) for no in layout["tree"]))
@@ -347,6 +384,10 @@ def main():
         carregar(sys.argv[2])
     elif cmd == "delete":
         apagar()
+    elif cmd == "flush":
+        esvaziar()
+    elif cmd == "move":
+        mover()
     elif cmd == "install":
         instalar()
     else:
