@@ -235,6 +235,10 @@ gaps outer 0
 # Remove as barras de título 
 for_window [class="^.*"] border pixel 0
 
+# Seletor de arquivos (Ctrl+O): o GTK reabre no último tamanho, que pode ser
+# maior que a tela (768 px); força 80% e centraliza
+for_window [window_role="GtkFileChooserDialog"] resize set 80 ppt 80 ppt, move position center
+
 # Fonte 0 para bordas invisíveis
 font pango:DejaVu Sans Mono 0
 
