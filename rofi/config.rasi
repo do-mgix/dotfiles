@@ -1,0 +1,10 @@
+configuration {
+    /* Busca só no nome e no nome genérico: exec, categorias e keywords
+       faziam "file" achar Stremio (--file-forwarding) e Bulk Rename */
+    drun-match-fields: "name,generic";
+    /* Ordena pela qualidade do match, com o início do nome na frente */
+    sort: true;
+    sorting-method: "fzf";
+}
+
+@theme "/usr/share/rofi/themes/dmenu.rasi"
