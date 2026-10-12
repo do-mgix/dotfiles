@@ -128,3 +128,6 @@ export NVM_DIR="$HOME/.nvm"
 # >>> Codex installer >>>
 export PATH="/home/mine/.local/bin:$PATH"
 # <<< Codex installer <<<
+
+# Starship prompt
+eval "$(starship init bash)"
