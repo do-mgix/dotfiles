@@ -58,8 +58,8 @@ exec_always --no-startup-id picom --config ~/.config/picom/picom.conf -b
 # Versao em video MP4 via mpv, deve funcionar como background real com xwinwrap.
 #exec_always --no-startup-id /home/mine/.local/bin/ps2-clock-video-wallpaper
 
-# Iniciar o redshift
-exec_always redshift -x && redshift -O 5000 -b 0.3
+# Restaurar o último brilho (backlight + fator do xrandr), salvo pelo brilho.sh
+exec_always --no-startup-id ~/dotfiles/i3/scripts/brilho.sh restore
 
 # Startup sound
 exec_always .config/i3/scripts/play-sfx.sh .config/i3/sounds/$sound_theme/startup.mp3 $mpg_volume_startup true

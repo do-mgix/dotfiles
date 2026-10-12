@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # Brilho em duas faixas: backlight (brightnessctl) e, abaixo do mínimo dele,
 # o fator de software do xrandr (<= 1).
-# Uso: brilho.sh down|up
+# Uso: brilho.sh down|up|restore
+#
+# Cada mudança grava backlight e fator em $ESTADO; "restore" reaplica esses
+# valores (chamado pelo i3 ao iniciar). O fator do xrandr se perde ao reiniciar
+# o X, e o systemd-backlight sobe o backlight salvo para no mínimo 5%.
 
 SAIDA=eDP-1
 GAMMA=1.1:1.0:0.85
@@ -9,6 +13,7 @@ PASSO_LUZ=5        # % do backlight
 PASSO_FATOR=0.05
 FATOR_MIN=0.05
 APP_ID="BrilhoOSD"
+ESTADO="${XDG_STATE_HOME:-$HOME/.local/state}/brilho"
 
 # Descarta repetições da tecla enquanto outra execução ainda roda (ver volume.sh)
 exec 9>"${XDG_RUNTIME_DIR:-/tmp}/brilho-osd.lock"
@@ -31,6 +36,21 @@ set_fator() {
 
 fator_cheio() { awk -v f="$fator" 'BEGIN {exit !(f >= 1)}'; }
 
+salvar() {
+    mkdir -p "$(dirname "$ESTADO")"
+    printf '%s %s\n' "$(brightnessctl get)" "$fator" > "$ESTADO.tmp" &&
+        mv "$ESTADO.tmp" "$ESTADO"
+}
+
+if [ "$1" = restore ]; then
+    [ -r "$ESTADO" ] || exit 0
+    read -r luz_salva fator_salvo < "$ESTADO"
+    [[ $luz_salva =~ ^[0-9]+$ ]] && (( luz_salva >= 1 )) &&
+        brightnessctl -q set "$luz_salva"
+    [[ $fator_salvo =~ ^[0-9]*\.?[0-9]+$ ]] && set_fator "$fator_salvo"
+    exit 0
+fi
+
 case "$1" in
     down)
         if (( luz > passo_luz )); then
@@ -49,6 +69,7 @@ case "$1" in
         fi
         ;;
 esac
+salvar
 
 # OSD no mesmo estilo do volume
 if fator_cheio; then
