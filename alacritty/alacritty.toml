@@ -1,2 +1,3 @@
 [window]
-opacity = 1.0
+# Fundo invisível; só o texto aparece. Precisa do picom.
+opacity = 0.0
