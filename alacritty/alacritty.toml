@@ -1,0 +1,3 @@
+[window]
+# Só o fundo fica transparente; o texto continua opaco. Precisa do picom.
+opacity = 0.85
