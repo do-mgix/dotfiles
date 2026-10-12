@@ -136,7 +136,7 @@ bindsym $mod+h split h
 bindsym $mod+v split v
 
 # enter fullscreen mode for the focused container
-#bindsym $mod+f fullscreen toggle
+bindsym $mod+f fullscreen toggle
 # desativado para evitar inconsistências com gap 0
 
 # change container layout (stacked, tabbed, toggle split)
