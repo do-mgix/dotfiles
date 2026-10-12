@@ -92,6 +92,10 @@ bindsym $mod+Return exec alacritty
 # kill focused window
 bindsym $mod+q kill, exec .config/i3/scripts/play-sfx.sh .config/i3/sounds/$sound_theme/o.mp3 $mpg_volume_close true
 
+# fecha todas as janelas do workspace / move o workspace para outro (esvaziando o destino)
+bindsym $mod+Shift+q exec --no-startup-id ~/dotfiles/i3/scripts/layout.py flush
+bindsym $mod+Shift+m exec --no-startup-id ~/dotfiles/i3/scripts/layout.py move
+
 # Captura de tela com Flameshot
 bindsym $mod+Shift+s exec --no-startup-id flatpak run org.flameshot.Flameshot gui
 
