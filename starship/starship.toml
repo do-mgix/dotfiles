@@ -1,0 +1,4 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# O PROMPT_COMMAND do .bashrc já imprime uma linha em branco antes do prompt
+add_newline = false
