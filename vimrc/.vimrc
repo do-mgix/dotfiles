@@ -258,7 +258,6 @@ call plug#begin('~/.vim/plugged')
 	Plug 'junegunn/goyo.vim'
 	Plug 'junegunn/limelight.vim'
 	Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-	Plug 'ghifarit53/tokyonight-vim'
 	Plug 'lifepillar/vim-mucomplete'
 	Plug 'tpope/vim-dispatch'
 	Plug 'romainl/vim-qf'
@@ -273,18 +272,16 @@ call plug#end()
 
 "	temas
 
-"<leader>1 transparente, 2 Tokyo Night (tema azulado do VS Code), 3 preto, 4 branco
+"<leader>1 transparente, 2 catppuccin com o fundo dele, 3 preto, 4 branco
 "colorscheme, background e fundo do Normal ('' mantém o fundo do próprio tema)
 let s:themes = {
 	\ 1: ['catppuccin_mocha', 'dark', 'NONE'],
-	\ 2: ['tokyonight', 'dark', ''],
+	\ 2: ['catppuccin_mocha', 'dark', ''],
 	\ 3: ['catppuccin_mocha', 'dark', '#000000'],
 	\ 4: ['catppuccin_latte', 'light', '#ffffff'],
 	\ }
 "a escolha fica salva para os próximos vims
 let s:theme_file = expand('~/.vim/tema')
-"variante storm, a mais azulada do Tokyo Night
-let g:tokyonight_style = 'storm'
 
 function! s:apply_theme(n)
 	let s:theme = a:n
