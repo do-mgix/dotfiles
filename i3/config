@@ -52,6 +52,9 @@ exec_always unclutter -idle 1 -root &
 # Cursor do fundo da área de trabalho no tema Circle (~/.icons/default)
 exec_always --no-startup-id xsetroot -cursor_name left_ptr
 
+# Notificação do dunst ao reiniciar o i3 (não aparece no login)
+exec_always --no-startup-id ~/dotfiles/i3/scripts/reiniciado.sh
+
 # Iniciar o compositor de janelas com o seu arquivo de config
 # Ao reiniciar o i3, encerra o picom anterior antes de abrir outro; sem isso o
 # novo acusa "Another composite manager is already running"
