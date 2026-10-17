@@ -1,6 +1,8 @@
 [window]
 # Fundo invisível; só o texto aparece. Precisa do picom.
 opacity = 0.0
+# Margem interna, já que o i3 não tem mais gap entre as janelas
+padding = { x = 12, y = 12 }
 
 [font]
 # variante Mono: os ícones do Nerd Font ocupam uma célula só, sem desalinhar o texto
