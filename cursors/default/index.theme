@@ -1,0 +1,3 @@
+# Tema de cursor padrão do X (libXcursor lê ~/.icons/default)
+[Icon Theme]
+Inherits=Circle

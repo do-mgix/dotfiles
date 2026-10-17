@@ -49,6 +49,9 @@ exec_always --no-startup-id numlockx off
 # Esconder cursor 
 exec_always unclutter -idle 1 -root &  
 
+# Cursor do fundo da área de trabalho no tema Circle (~/.icons/default)
+exec_always --no-startup-id xsetroot -cursor_name left_ptr
+
 # Iniciar o compositor de janelas com o seu arquivo de config
 exec_always --no-startup-id picom --config ~/.config/picom/picom.conf -b
 
