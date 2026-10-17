@@ -101,9 +101,19 @@ function! s:apply_bg()
 endfunction
 
 "abre os arquivos escolhidos no fzf marcando-os para receber o fundo do tema
+"a primeira linha é a tecla usada (vazia no enter); ctrl-t/x/v abrem em aba/split/vsplit
+let s:files_actions = {'ctrl-t': 'tab split', 'ctrl-x': 'split', 'ctrl-v': 'vsplit'}
+
 function! s:open_from_files(lines)
-	for l:file in a:lines
-		execute 'edit' fnameescape(l:file)
+	if len(a:lines) < 2
+		return
+	endif
+	let l:cmd = get(get(g:, 'fzf_action', s:files_actions), a:lines[0], 'edit')
+	if type(l:cmd) != v:t_string
+		let l:cmd = 'edit'
+	endif
+	for l:file in a:lines[1:]
+		execute l:cmd fnameescape(l:file)
 		let b:themed_bg = 1
 		call s:apply_bg()
 	endfor
