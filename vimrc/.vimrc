@@ -91,7 +91,10 @@ function! s:prose_highlights()
 endfunction
 
 function! s:apply_bg()
-	let &l:wincolor = index(s:prose_filetypes, &filetype) >= 0 ? 'ProseNormal' : ''
+	let l:prose = index(s:prose_filetypes, &filetype) >= 0
+	let &l:wincolor = l:prose ? 'ProseNormal' : ''
+	"em código a coluna de sinais fica sempre aberta, para o texto não pular quando surge um diff
+	let &l:signcolumn = l:prose ? 'auto' : 'yes'
 endfunction
 
 augroup prosebg
@@ -99,6 +102,38 @@ augroup prosebg
 	autocmd ColorScheme * call s:prose_highlights()
 	autocmd BufWinEnter,FileType,WinEnter * call s:apply_bg()
 augroup END
+
+"	git diff
+
+"cores do diff no estilo do VS Code: fundo tingido, mantendo as cores da sintaxe
+function! s:diff_highlights()
+	highlight DiffAdd    guifg=NONE    guibg=#2b3b35 gui=NONE
+	highlight DiffChange guifg=NONE    guibg=#2a2d40 gui=NONE
+	highlight DiffText   guifg=NONE    guibg=#3d4a6b gui=NONE
+	highlight DiffDelete guifg=#6c7086 guibg=#3b2833 gui=NONE
+	highlight SignColumn guibg=NONE
+	highlight GitGutterAdd          guifg=#a6e3a1 guibg=NONE
+	highlight GitGutterChange       guifg=#f9e2af guibg=NONE
+	highlight GitGutterDelete       guifg=#f38ba8 guibg=NONE
+	highlight GitGutterChangeDelete guifg=#fab387 guibg=NONE
+endfunction
+
+augroup diffcolors
+	autocmd!
+	autocmd ColorScheme * call s:diff_highlights()
+augroup END
+
+"barras finas na margem, como no VS Code
+let g:gitgutter_sign_added = '▎'
+let g:gitgutter_sign_modified = '▎'
+let g:gitgutter_sign_removed = '▁'
+let g:gitgutter_sign_removed_first_line = '▔'
+let g:gitgutter_sign_modified_removed = '▎'
+"atualiza os sinais 100ms depois de parar de digitar
+set updatetime=100
+
+"diff lado a lado e com alinhamento melhor
+set diffopt+=vertical,algorithm:histogram,indent-heuristic
 
 "	identação
 
@@ -147,6 +182,12 @@ nnoremap <leader>r :source %<CR>
 "goyo"
 nnoremap <leader>g :Goyo<CR>   
 
+"diff do arquivo atual com o último commit, lado a lado"
+nnoremap <leader>d :Gvdiffsplit<CR>
+
+"git status do fugitive (s/u para stage/unstage, dv no arquivo abre o diff)"
+nnoremap <leader>G :Git<CR>
+
 "sair"
 nnoremap <leader>t :termi<CR>   
 
@@ -167,6 +208,7 @@ call plug#begin('~/.vim/plugged')
 	Plug 'tpope/vim-sleuth'
 	Plug 'alvan/vim-closetag'
 	Plug 'jiangmiao/auto-pairs'
+	Plug 'airblade/vim-gitgutter'
 
 call plug#end()
 
