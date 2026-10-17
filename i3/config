@@ -279,7 +279,7 @@ bar {
  	
 	# Hack Nerd Font: mais legível e com os ícones dos módulos
 	font pango:Hack Nerd Font 10
-        status_command i3status --config ~/.config/i3status/i3status.conf
+        status_command ~/dotfiles/i3/scripts/i3status.sh
 	position top
 	mode hide
     # Oculta completamente a bandeja do sistema (nm-applet flameshot, etc.)
