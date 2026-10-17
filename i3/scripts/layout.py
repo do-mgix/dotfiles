@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Salva e restaura a disposição de janelas do workspace atual do i3.
 
-Uso: layout.py save | load <id> | delete | flush | move | install
+Uso: layout.py save | load <id> | delete | default | flush | move | install
 
 Cada layout guarda a árvore do workspace (splits, abas, tamanhos e janelas
 flutuantes) e, para cada janela, o comando que a abre e o diretório onde
@@ -12,6 +12,11 @@ Layout", "Delete Workspace Layout" e um "Load Layout: <nome> (#id)" por
 layout salvo. Também há "Flush Workspace", que fecha todas as janelas do
 workspace atual, e "Move Workspace", que esvazia o workspace escolhido e leva
 para ele o atual, com a mesma disposição.
+
+"Set Default Workspace" escolhe um layout salvo como padrão do workspace
+atual (um por workspace). Daí em diante, carregar esse layout fecha sem
+confirmação as janelas daquele workspace, vai para ele e abre o layout lá,
+de qualquer workspace em que se esteja.
 
 Para carregar, o i3 cria placeholders com append_layout e os programas são
 abertos um de cada vez, na ordem da árvore: o i3 encaixa cada janela nova no
@@ -246,6 +251,21 @@ def instalar():
     escrever_desktop("i3-layout-delete.desktop", "Delete Workspace Layout", "delete")
     escrever_desktop("i3-layout-flush.desktop", "Flush Workspace", "flush")
     escrever_desktop("i3-layout-move.desktop", "Move Workspace", "move")
+    escrever_desktop("i3-layout-default.desktop", "Set Default Workspace", "default")
+
+
+def escrever_load(layout):
+    destino = f" → {layout['workspace']}" if layout.get("workspace") else ""
+    escrever_desktop(f"i3-layout-{layout['id']}.desktop",
+                     f"Load Layout: {layout['name']} (#{layout['id']}){destino}",
+                     f"load {layout['id']}")
+
+
+def gravar(layout):
+    LAYOUTS.mkdir(parents=True, exist_ok=True)
+    (LAYOUTS / f"{layout['id']}.json").write_text(
+        json.dumps(layout, indent=2, ensure_ascii=False))
+    escrever_load(layout)
 
 
 def layouts_salvos():
@@ -269,12 +289,10 @@ def salvar():
     if not nome:
         return
 
-    LAYOUTS.mkdir(parents=True, exist_ok=True)
     id_ = max((l["id"] for l in layouts_salvos()), default=0) + 1
     layout = {"id": id_, "name": nome, "created": time.strftime("%Y-%m-%d %H:%M"),
               "tree": arvore, "apps": apps}
-    (LAYOUTS / f"{id_}.json").write_text(json.dumps(layout, indent=2, ensure_ascii=False))
-    escrever_desktop(f"i3-layout-{id_}.desktop", f"Load Layout: {nome} (#{id_})", f"load {id_}")
+    gravar(layout)
     instalar()
     avisar(f"Salvo: {nome} (#{id_}), {len(apps)} janela(s)")
 
@@ -324,9 +342,10 @@ def carregar(id_):
         avisar(f"Layout #{id_} não existe")
         return
     layout = json.loads(arquivo.read_text())
-    # Fixa o workspace no início: trocar de workspace durante o carregamento
-    # não pode fazer o script fechar janelas de outro
-    nome = nome_focado()
+    # Fixa o workspace no início (o padrão do layout, se houver): trocar de
+    # workspace durante o carregamento não pode fazer o script fechar janelas
+    # de outro
+    nome = layout.get("workspace") or nome_focado()
     ws = lambda: workspace(nome) or {"type": "workspace"}
 
     if not limpar(nome):
@@ -335,7 +354,8 @@ def carregar(id_):
 
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
         tmp.write("\n".join(json.dumps(no) for no in layout["tree"]))
-    i3(f'workspace "{nome}"; append_layout "{tmp.name}"')
+    alvo = nome.replace('"', '\\"')
+    i3(f'workspace "{alvo}"; append_layout "{tmp.name}"')
     os.unlink(tmp.name)
 
     falhas = 0
@@ -361,6 +381,33 @@ def carregar(id_):
         avisar(f"{layout['name']}: {falhas} janela(s) não abriram")
 
 
+def definir_padrao():
+    nome = nome_focado()
+    salvos = layouts_salvos()
+    if not salvos:
+        avisar("Nenhum layout salvo")
+        return
+    opcoes = ["#0  (nenhum)"] + [
+        f"#{l['id']}  {l['name']}" + ("  *" if l.get("workspace") == nome else "")
+        for l in salvos]
+    m = re.match(r"#(\d+)", rofi(f"Layout padrão do workspace {nome}", opcoes))
+    if not m:
+        return
+    id_ = int(m.group(1))
+    # Um layout padrão por workspace: o escolhido toma o lugar do anterior
+    for l in salvos:
+        if l["id"] == id_:
+            l["workspace"] = nome
+        elif l.get("workspace") == nome:
+            del l["workspace"]
+        else:
+            continue
+        gravar(l)
+    escolhido = next((l["name"] for l in salvos if l["id"] == id_), None)
+    avisar(f"Workspace {nome}: {escolhido}" if escolhido
+           else f"Workspace {nome} sem layout padrão")
+
+
 def apagar():
     salvos = layouts_salvos()
     if not salvos:
@@ -384,6 +431,8 @@ def main():
         carregar(sys.argv[2])
     elif cmd == "delete":
         apagar()
+    elif cmd == "default":
+        definir_padrao()
     elif cmd == "flush":
         esvaziar()
     elif cmd == "move":
