@@ -63,6 +63,12 @@ let g:netrw_banner = 0
 "cores de 24 bits, como no VS Code
 set termguicolors
 
+"cursor padrão do terminal em todos os modos: sem a barra fina na inserção
+"nem o sublinhado no replace (\e[0 q volta ao formato configurado no terminal)
+let &t_SI = "\e[0 q"
+let &t_SR = "\e[0 q"
+let &t_EI = "\e[0 q"
+
 "tema claro escolhido em <leader>4; não dá para usar &background, porque o
 "catppuccin_latte força background=dark
 function! s:is_light()
