@@ -2,3 +2,21 @@
 
 # O PROMPT_COMMAND do .bashrc já imprime uma linha em branco antes do prompt
 add_newline = false
+
+# prompt numa linha só: caminho completo, git e o resto, sem o símbolo ❯
+format = '${env_var.PWD}$all'
+
+[line_break]
+disabled = true
+
+[character]
+disabled = true
+
+# o módulo directory abrevia o home para ~ e corta o caminho no repositório;
+# o $PWD mostra o caminho absoluto inteiro
+[directory]
+disabled = true
+
+[env_var.PWD]
+format = '[$env_value]($style) '
+style = 'bold cyan'

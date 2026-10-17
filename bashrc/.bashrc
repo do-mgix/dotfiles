@@ -134,7 +134,7 @@ eval "$(starship init bash)"
 
 # Prompt ancorado no rodapé do terminal, ao abrir e no Ctrl+L
 if [[ $- == *i* ]]; then
-	# limpa a tela e desenha as linhas de cima do prompt (o starship usa duas)
+	# limpa a tela e desenha as linhas de cima do prompt, se ele tiver mais de uma,
 	# logo acima da última linha; o readline redesenha só a última
 	_prompt_to_bottom() {
 		local prompt="${PS1@P}"
