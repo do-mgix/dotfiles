@@ -227,7 +227,7 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 
 # Gaps entre as janelas (internos)
-gaps inner 0
+gaps inner 12
 
 # Gaps entre as janelas e as bordas da tela (externos)
 gaps outer 0
