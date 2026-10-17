@@ -83,50 +83,27 @@ augroup spellcolors
 	autocmd ColorScheme * call s:spell_highlights()
 augroup END
 
-"fundo transparente por padrão; o fundo do tema só aparece em código aberto pelo <leader>f
-let s:prose_filetypes = ['', 'text', 'markdown', 'mail', 'gitcommit']
-
+"fundo sempre transparente, com o fundo do terminal
 function! s:transparent_highlights()
-	highlight TransparentNormal guifg=#cdd6f4 guibg=NONE ctermbg=NONE
+	highlight Normal guibg=NONE ctermbg=NONE
+	highlight FoldColumn guibg=NONE ctermbg=NONE
+	highlight Underlined guibg=NONE ctermbg=NONE
 endfunction
 
-function! s:apply_bg()
+"texto puro (journal, markdown...) quebra a linha; código vaza para a direita
+let s:prose_filetypes = ['', 'text', 'markdown', 'mail', 'gitcommit']
+
+function! s:apply_layout()
 	let l:prose = index(s:prose_filetypes, &filetype) >= 0
-	let l:themed = !l:prose && get(b:, 'themed_bg', 0)
-	let &l:wincolor = l:themed ? '' : 'TransparentNormal'
 	"em código a coluna de sinais fica sempre aberta, para o texto não pular quando surge um diff
 	let &l:signcolumn = l:prose ? 'auto' : 'yes'
-	"código vaza para a direita em vez de quebrar a linha; texto continua quebrando
 	let &l:wrap = l:prose
 endfunction
 
-"abre os arquivos escolhidos no fzf marcando-os para receber o fundo do tema
-"a primeira linha é a tecla usada (vazia no enter); ctrl-t/x/v abrem em aba/split/vsplit
-let s:files_actions = {'ctrl-t': 'tab split', 'ctrl-x': 'split', 'ctrl-v': 'vsplit'}
-
-function! s:open_from_files(lines)
-	if len(a:lines) < 2
-		return
-	endif
-	let l:cmd = get(get(g:, 'fzf_action', s:files_actions), a:lines[0], 'edit')
-	if type(l:cmd) != v:t_string
-		let l:cmd = 'edit'
-	endif
-	for l:file in a:lines[1:]
-		execute l:cmd fnameescape(l:file)
-		let b:themed_bg = 1
-		call s:apply_bg()
-	endfor
-endfunction
-
-function! s:files()
-	call fzf#vim#files('', fzf#vim#with_preview({'sink*': function('s:open_from_files')}))
-endfunction
-
-augroup themedbg
+augroup layout
 	autocmd!
 	autocmd ColorScheme * call s:transparent_highlights()
-	autocmd BufWinEnter,FileType,WinEnter * call s:apply_bg()
+	autocmd BufWinEnter,FileType,WinEnter * call s:apply_layout()
 augroup END
 
 "rolagem horizontal suave quando a linha passa da tela
@@ -195,7 +172,7 @@ inoremap -- —
 let mapleader = " " 
 
 "abre file search fzf"
-nnoremap <leader>f :call <SID>files()<CR>
+nnoremap <leader>f :Files<CR>
 
 "search by lines"
 nnoremap <leader>l :Lines<CR>   
@@ -212,8 +189,22 @@ nnoremap <leader>r :source %<CR>
 "goyo"
 nnoremap <leader>g :Goyo<CR>   
 
-"diff do arquivo atual com o último commit, lado a lado"
-nnoremap <leader>d :Gvdiffsplit<CR>
+"liga e desliga o diff do arquivo atual com o git, lado a lado"
+"o cursor fica no arquivo de verdade, não na cópia do git (onde a margem do gitgutter não aparece)"
+function! s:toggle_diff()
+	if &diff
+		for l:win in range(winnr('$'), 1, -1)
+			if bufname(winbufnr(l:win)) =~# '^fugitive://'
+				execute l:win 'close'
+			endif
+		endfor
+		diffoff
+	else
+		Gvdiffsplit
+		wincmd p
+	endif
+endfunction
+nnoremap <leader>d :call <SID>toggle_diff()<CR>
 
 "git status do fugitive (s/u para stage/unstage, dv no arquivo abre o diff)"
 nnoremap <leader>G :Git<CR>
