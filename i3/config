@@ -53,7 +53,9 @@ exec_always unclutter -idle 1 -root &
 exec_always --no-startup-id xsetroot -cursor_name left_ptr
 
 # Iniciar o compositor de janelas com o seu arquivo de config
-exec_always --no-startup-id picom --config ~/.config/picom/picom.conf -b
+# Ao reiniciar o i3, encerra o picom anterior antes de abrir outro; sem isso o
+# novo acusa "Another composite manager is already running"
+exec_always --no-startup-id sh -c 'pkill -x picom; while pgrep -x picom >/dev/null; do sleep 0.1; done; exec picom --config ~/.config/picom/picom.conf -b'
 
 # Wallpaper animado PS2 Clock
 # Desativado: o LÖVE abre uma janela propria em vez de renderizar no xwinwrap.
