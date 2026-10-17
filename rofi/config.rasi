@@ -5,6 +5,8 @@ configuration {
     /* Ordena pela qualidade do match, com o início do nome na frente */
     sort: true;
     sorting-method: "fzf";
+    /* Sem o rótulo "drun" no prompt do lançador */
+    display-drun: "";
 }
 
 @theme "/usr/share/rofi/themes/dmenu.rasi"
