@@ -83,25 +83,45 @@ augroup spellcolors
 	autocmd ColorScheme * call s:spell_highlights()
 augroup END
 
-"fundo do tema só em código; texto puro (journal, markdown...) fica com o fundo do terminal
+"fundo transparente por padrão; o fundo do tema só aparece em código aberto pelo <leader>f
 let s:prose_filetypes = ['', 'text', 'markdown', 'mail', 'gitcommit']
 
-function! s:prose_highlights()
-	highlight ProseNormal guifg=#cdd6f4 guibg=NONE ctermbg=NONE
+function! s:transparent_highlights()
+	highlight TransparentNormal guifg=#cdd6f4 guibg=NONE ctermbg=NONE
 endfunction
 
 function! s:apply_bg()
 	let l:prose = index(s:prose_filetypes, &filetype) >= 0
-	let &l:wincolor = l:prose ? 'ProseNormal' : ''
+	let l:themed = !l:prose && get(b:, 'themed_bg', 0)
+	let &l:wincolor = l:themed ? '' : 'TransparentNormal'
 	"em código a coluna de sinais fica sempre aberta, para o texto não pular quando surge um diff
 	let &l:signcolumn = l:prose ? 'auto' : 'yes'
+	"código vaza para a direita em vez de quebrar a linha; texto continua quebrando
+	let &l:wrap = l:prose
 endfunction
 
-augroup prosebg
+"abre os arquivos escolhidos no fzf marcando-os para receber o fundo do tema
+function! s:open_from_files(lines)
+	for l:file in a:lines
+		execute 'edit' fnameescape(l:file)
+		let b:themed_bg = 1
+		call s:apply_bg()
+	endfor
+endfunction
+
+function! s:files()
+	call fzf#vim#files('', fzf#vim#with_preview({'sink*': function('s:open_from_files')}))
+endfunction
+
+augroup themedbg
 	autocmd!
-	autocmd ColorScheme * call s:prose_highlights()
+	autocmd ColorScheme * call s:transparent_highlights()
 	autocmd BufWinEnter,FileType,WinEnter * call s:apply_bg()
 augroup END
+
+"rolagem horizontal suave quando a linha passa da tela
+set sidescroll=1
+set sidescrolloff=5
 
 "	git diff
 
@@ -165,7 +185,7 @@ inoremap -- —
 let mapleader = " " 
 
 "abre file search fzf"
-nnoremap <leader>f :Files<CR>   
+nnoremap <leader>f :call <SID>files()<CR>
 
 "search by lines"
 nnoremap <leader>l :Lines<CR>   
@@ -192,6 +212,10 @@ nnoremap <leader>G :Git<CR>
 nnoremap <leader>t :termi<CR>   
 
 "plugins"
+
+"o polyglot não detecta identação: isso fica com o vim-sleuth
+let g:polyglot_disabled = ['autoindent']
+
 call plug#begin('~/.vim/plugged')
 
 	" Lista de plugins
@@ -209,6 +233,7 @@ call plug#begin('~/.vim/plugged')
 	Plug 'alvan/vim-closetag'
 	Plug 'jiangmiao/auto-pairs'
 	Plug 'airblade/vim-gitgutter'
+	Plug 'sheerun/vim-polyglot'
 
 call plug#end()
 
