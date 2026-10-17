@@ -60,18 +60,40 @@ let g:limelight_conceal_ctermfg = 238
 " remove o banner de cabeçalho para mais espaço
 let g:netrw_banner = 0
 
-"estilo do spell
-highlight clear SpellBad
-highlight SpellBad ctermfg=white ctermbg=NONE cterm=NONE 
+"cores de 24 bits, como no VS Code
+set termguicolors
 
-highlight clear SpellCap
-highlight SpellCap cterm=NONE ctermfg=cyan gui=NONE guisp=NONE
+"estilo do spell: reaplicado depois de cada colorscheme, que limparia tudo
+function! s:spell_highlights()
+	highlight clear SpellBad
+	highlight SpellBad ctermfg=white ctermbg=NONE cterm=NONE guifg=#cdd6f4 guibg=NONE gui=NONE
 
-highlight clear SpellRare
-highlight SpellRare cterm=NONE ctermfg=magenta gui=NONE guisp=NONE
+	highlight clear SpellCap
+	highlight SpellCap cterm=NONE ctermfg=cyan gui=NONE guifg=#89dceb guisp=NONE
 
-highlight clear SpellLocal
-highlight SpellLocal cterm=NONE ctermfg=NONE gui=NONE guisp=NONE
+	highlight clear SpellRare
+	highlight SpellRare cterm=NONE ctermfg=magenta gui=NONE guifg=#cba6f7 guisp=NONE
+
+	highlight clear SpellLocal
+	highlight SpellLocal cterm=NONE ctermfg=NONE gui=NONE guifg=NONE guisp=NONE
+endfunction
+
+augroup spellcolors
+	autocmd!
+	autocmd ColorScheme * call s:spell_highlights()
+augroup END
+
+"	identação
+
+"padrão de 2 espaços; o vim-sleuth ajusta quando o arquivo já usa outro estilo
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+"mantém a identação da linha anterior ao dar enter
+set autoindent
+"backspace apaga identação, quebras de linha e o início da inserção
+set backspace=indent,eol,start
 
 "	plugins visuais
 
@@ -129,6 +151,9 @@ call plug#begin('~/.vim/plugged')
 	Plug 'alvan/vim-closetag'
 
 call plug#end()
+
+"plug#end já liga syntax e filetype plugin indent; falta só o tema
+silent! colorscheme catppuccin_mocha
 
 "mucomplete: exige menuone no completeopt
 set completeopt+=menuone,noselect
