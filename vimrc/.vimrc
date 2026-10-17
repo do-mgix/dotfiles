@@ -83,6 +83,23 @@ augroup spellcolors
 	autocmd ColorScheme * call s:spell_highlights()
 augroup END
 
+"fundo do tema só em código; texto puro (journal, markdown...) fica com o fundo do terminal
+let s:prose_filetypes = ['', 'text', 'markdown', 'mail', 'gitcommit']
+
+function! s:prose_highlights()
+	highlight ProseNormal guifg=#cdd6f4 guibg=NONE ctermbg=NONE
+endfunction
+
+function! s:apply_bg()
+	let &l:wincolor = index(s:prose_filetypes, &filetype) >= 0 ? 'ProseNormal' : ''
+endfunction
+
+augroup prosebg
+	autocmd!
+	autocmd ColorScheme * call s:prose_highlights()
+	autocmd BufWinEnter,FileType,WinEnter * call s:apply_bg()
+augroup END
+
 "	identação
 
 "padrão de 2 espaços; o vim-sleuth ajusta quando o arquivo já usa outro estilo
