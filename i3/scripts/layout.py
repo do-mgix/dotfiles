@@ -13,10 +13,10 @@ layout salvo. Também há "Flush Workspace", que fecha todas as janelas do
 workspace atual, e "Move Workspace", que esvazia o workspace escolhido e leva
 para ele o atual, com a mesma disposição.
 
-"Set Default Workspace" escolhe um layout salvo como padrão do workspace
-atual (um por workspace). Daí em diante, carregar esse layout fecha sem
+"Set Default Workspace" escolhe um layout salvo e depois o workspace padrão
+dele (um layout por workspace). Daí em diante, carregar esse layout fecha sem
 confirmação as janelas daquele workspace, vai para ele e abre o layout lá,
-de qualquer workspace em que se esteja.
+de qualquer workspace em que se esteja; o workspace atual não é tocado.
 
 Para carregar, o i3 cria placeholders com append_layout e os programas são
 abertos um de cada vez, na ordem da árvore: o i3 encaixa cada janela nova no
@@ -382,30 +382,39 @@ def carregar(id_):
 
 
 def definir_padrao():
-    nome = nome_focado()
     salvos = layouts_salvos()
     if not salvos:
         avisar("Nenhum layout salvo")
         return
-    opcoes = ["#0  (nenhum)"] + [
-        f"#{l['id']}  {l['name']}" + ("  *" if l.get("workspace") == nome else "")
-        for l in salvos]
-    m = re.match(r"#(\d+)", rofi(f"Layout padrão do workspace {nome}", opcoes))
+    opcoes = [f"#{l['id']}  {l['name']}" + (f"  → {l['workspace']}" if l.get("workspace") else "")
+              for l in salvos]
+    m = re.match(r"#(\d+)", rofi("Layout", opcoes))
     if not m:
         return
-    id_ = int(m.group(1))
+    layout = next((l for l in salvos if l["id"] == int(m.group(1))), None)
+    if not layout:
+        return
+    # O workspace é escolhido à parte (não é o atual): dá para digitar um que
+    # ainda não existe
+    nomes = [w["name"] for w in json.loads(i3("-t", "get_workspaces"))]
+    nome = rofi(f"Workspace padrão de {layout['name']}", ["(nenhum)"] + nomes)
+    if not nome:
+        return
+    nome = None if nome == "(nenhum)" else nome
     # Um layout padrão por workspace: o escolhido toma o lugar do anterior
     for l in salvos:
-        if l["id"] == id_:
-            l["workspace"] = nome
-        elif l.get("workspace") == nome:
+        if l is layout:
+            if nome:
+                l["workspace"] = nome
+            else:
+                l.pop("workspace", None)
+        elif nome and l.get("workspace") == nome:
             del l["workspace"]
         else:
             continue
         gravar(l)
-    escolhido = next((l["name"] for l in salvos if l["id"] == id_), None)
-    avisar(f"Workspace {nome}: {escolhido}" if escolhido
-           else f"Workspace {nome} sem layout padrão")
+    avisar(f"{layout['name']} → workspace {nome}" if nome
+           else f"{layout['name']} sem workspace padrão")
 
 
 def apagar():
