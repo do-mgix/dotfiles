@@ -115,7 +115,8 @@ bindsym $mod+d exec --no-startup-id rofi -show drun, exec .config/i3/scripts/pla
 # change focus
 bindsym $mod+j focus left
 bindsym $mod+k focus down
-bindsym $mod+l focus up
+# $mod+l abre o menu de sessão (bloquear / sair); focar acima fica no $mod+Up
+bindsym $mod+l exec --no-startup-id ~/dotfiles/i3/scripts/sessao.sh
 bindsym $mod+ccedilla focus right
 
 # alternatively, you can use the cursor keys:
