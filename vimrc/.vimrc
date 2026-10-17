@@ -149,6 +149,7 @@ call plug#begin('~/.vim/plugged')
 	Plug 'Yggdroot/indentLine'
 	Plug 'tpope/vim-sleuth'
 	Plug 'alvan/vim-closetag'
+	Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
