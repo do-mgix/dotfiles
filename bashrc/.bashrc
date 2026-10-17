@@ -130,6 +130,16 @@ export PATH="/home/mine/.local/bin:$PATH"
 # <<< Codex installer <<<
 
 # Starship prompt
+# caminho do prompt sem o /home/mine: relativo ao home, vazio no próprio home;
+# fora do home continua absoluto. O starship lê isso do env_var.PROMPT_DIR
+_prompt_dir() {
+	if [[ $PWD == "$HOME" ]]; then
+		unset PROMPT_DIR
+	else
+		export PROMPT_DIR="${PWD#"$HOME"/}"
+	fi
+}
+starship_precmd_user_func="_prompt_dir"
 eval "$(starship init bash)"
 
 # Prompt ancorado no rodapé do terminal, ao abrir e no Ctrl+L

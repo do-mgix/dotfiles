@@ -4,7 +4,7 @@
 add_newline = false
 
 # prompt numa linha só: caminho completo, git e o resto, sem o símbolo ❯
-format = '${env_var.PWD}$all'
+format = '${env_var.PROMPT_DIR}$all'
 
 [line_break]
 disabled = true
@@ -13,10 +13,10 @@ disabled = true
 disabled = true
 
 # o módulo directory abrevia o home para ~ e corta o caminho no repositório;
-# o $PWD mostra o caminho absoluto inteiro
+# o PROMPT_DIR vem do .bashrc: caminho inteiro sem o /home/mine, e some no home
 [directory]
 disabled = true
 
-[env_var.PWD]
+[env_var.PROMPT_DIR]
 format = '[$env_value]($style) '
 style = 'bold cyan'
