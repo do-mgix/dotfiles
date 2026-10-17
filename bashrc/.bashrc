@@ -131,3 +131,19 @@ export PATH="/home/mine/.local/bin:$PATH"
 
 # Starship prompt
 eval "$(starship init bash)"
+
+# Prompt ancorado no rodapé do terminal, ao abrir e no Ctrl+L
+if [[ $- == *i* ]]; then
+	# limpa a tela e desenha as linhas de cima do prompt (o starship usa duas)
+	# logo acima da última linha; o readline redesenha só a última
+	_prompt_to_bottom() {
+		local prompt="${PS1@P}"
+		local head="" rows
+		[[ $prompt == *$'\n'* ]] && head="${prompt%$'\n'*}"
+		rows=$(printf '%s' "$head" | grep -c '')
+		printf '\e[H\e[2J\e[%sH' "$(( $(tput lines) - rows ))"
+		[[ -n $head ]] && printf '%s\n' "$head"
+	}
+	printf '\e[%sH' "$(tput lines)"
+	bind -x '"\C-l": _prompt_to_bottom'
+fi
