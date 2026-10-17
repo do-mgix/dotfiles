@@ -284,4 +284,19 @@ bar {
 	mode hide
     # Oculta completamente a bandeja do sistema (nm-applet flameshot, etc.)
     	tray_output none
+
+	# Fundos transparentes (cor com alfa 00, precisa do --transparency e do picom);
+	# workspace selecionada em branco, as outras em cinza
+	i3bar_command i3bar --transparency
+	colors {
+		background #00000000
+		statusline #ffffff
+		separator  #00000000
+		#                  borda     fundo     texto
+		focused_workspace  #00000000 #00000000 #ffffff
+		active_workspace   #00000000 #00000000 #bbbbbb
+		inactive_workspace #00000000 #00000000 #777777
+		urgent_workspace   #00000000 #00000000 #f38ba8
+		binding_mode       #00000000 #00000000 #ffffff
+	}
 }
