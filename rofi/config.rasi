@@ -8,3 +8,32 @@ configuration {
 }
 
 @theme "/usr/share/rofi/themes/dmenu.rasi"
+
+/* Mesmo visual do i3bar: fundo transparente (precisa do picom), item
+   selecionado em branco e em negrito, os demais em cinza */
+* {
+    background-color: transparent;
+    text-color:       #777777;
+    font:             "Hack Nerd Font 10";
+}
+window {
+    background-color: #00000000;
+    transparency:     "real";
+}
+prompt, entry {
+    text-color: #ffffff;
+}
+element selected, element selected.normal, element selected.active,
+element selected.urgent {
+    background-color: transparent;
+    text-color:       #ffffff;
+}
+element-text {
+    font: inherit;
+}
+element selected {
+    font: "Hack Nerd Font Bold 10";
+}
+element.urgent, element alternate.urgent, element normal.urgent {
+    text-color: #f38ba8;
+}
