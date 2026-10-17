@@ -277,7 +277,8 @@ bindsym $mod+m bar mode toggle
 
 bar {
  	
-	font pango:DejaVu Sans Mono 9
+	# Hack Nerd Font: mais legível e com os ícones dos módulos
+	font pango:Hack Nerd Font 10
         status_command i3status --config ~/.config/i3status/i3status.conf
 	position top
 	mode hide
