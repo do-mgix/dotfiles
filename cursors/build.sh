@@ -1,7 +1,8 @@
 #!/bin/sh
 # Gera o tema de cursor "Circle": círculo vazado no ponteiro normal e
-# preenchido no que é clicável (links, botões). Os outros cursores (texto,
-# redimensionar, espera) vêm do Adwaita pelo Inherits do index.theme.
+# preenchido no que é clicável (links, botões). O cursor de texto também é o
+# círculo vazado, para não virar um "I" sobre o terminal. Os outros
+# (redimensionar, espera) vêm do Adwaita pelo Inherits do index.theme.
 # Precisa de imagemagick e xcursorgen. Rode de novo depois de mudar o desenho.
 set -e
 cd "$(dirname "$0")/Circle"
@@ -35,7 +36,7 @@ rm -rf cursors && mkdir cursors
 xcursorgen "$tmp/ring.cfg" cursors/left_ptr
 xcursorgen "$tmp/fill.cfg" cursors/pointer
 cd cursors
-for name in default arrow top_left_arrow left_arrow; do ln -s left_ptr $name; done
+for name in default arrow top_left_arrow left_arrow text xterm ibeam; do ln -s left_ptr $name; done
 for name in hand1 hand2 pointing_hand 9d800788f1b08800ae810202380a0822 e29285e634086352946a0e7090d73106; do
 	ln -s pointer $name
 done
