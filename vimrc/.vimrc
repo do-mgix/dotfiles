@@ -97,7 +97,8 @@ function! s:apply_layout()
 	let l:prose = index(s:prose_filetypes, &filetype) >= 0
 	"em código a coluna de sinais fica sempre aberta, para o texto não pular quando surge um diff
 	let &l:signcolumn = l:prose ? 'auto' : 'yes'
-	let &l:wrap = l:prose
+	"<leader>l troca isso por buffer, guardando a escolha em b:wrap
+	let &l:wrap = get(b:, 'wrap', l:prose)
 endfunction
 
 augroup layout
@@ -175,7 +176,14 @@ let mapleader = " "
 nnoremap <leader>f :Files<CR>
 
 "search by lines"
-nnoremap <leader>l :Lines<CR>   
+nnoremap <leader>L :Lines<CR>
+
+"alterna a quebra de linha no buffer atual"
+function! s:toggle_wrap()
+	let b:wrap = !&l:wrap
+	let &l:wrap = b:wrap
+endfunction
+nnoremap <leader>l :call <SID>toggle_wrap()<CR>
 
 "buffers"
 nnoremap <leader>b :Buffers<CR>   
