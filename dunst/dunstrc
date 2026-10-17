@@ -193,3 +193,12 @@ timeout = 0
 appname = Spotify
 new_icon = /home/pedro/.local/share/icons/hicolor/64x64/apps/spotify.png
 timeout = 3
+
+# Barras de progresso brancas nos OSDs de volume e brilho
+[VolumeOSD]
+appname = VolumeOSD
+highlight = "#ffffff"
+
+[BrilhoOSD]
+appname = BrilhoOSD
+highlight = "#ffffff"
