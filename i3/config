@@ -120,7 +120,7 @@ bindsym $mod+d exec --no-startup-id rofi -show drun, exec .config/i3/scripts/pla
 # change focus
 bindsym $mod+j focus left
 bindsym $mod+k focus down
-# $mod+l abre o menu de sessão (bloquear / sair); focar acima fica no $mod+Up
+# $mod+l abre o menu de sessão (apagar a tela / bloquear / sair); focar acima fica no $mod+Up
 bindsym $mod+l exec --no-startup-id ~/dotfiles/i3/scripts/sessao.sh
 bindsym $mod+ccedilla focus right
 
@@ -232,7 +232,9 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' '~/dotfiles/i3/scripts/bye.sh sair'"
+# apaga só a tela (DPMS), mostrando "bye" antes; qualquer tecla ou mouse acorda
+bindsym $mod+space exec --no-startup-id ~/dotfiles/i3/scripts/bye.sh apagar
 
 
 # Gaps entre as janelas (internos)

@@ -1,8 +1,10 @@
 #!/bin/sh
-# Menu de sessão no rofi ($mod+l): bloquear a tela ou sair do i3
-choice=$(printf 'bloquear\nsair da sessão\n' | rofi -dmenu -i -p sessão) || exit 0
+# Menu de sessão no rofi ($mod+l): apagar a tela, bloquear ou sair do i3, sempre com "bye" antes
+choice=$(printf 'apagar a tela\nbloquear\nsair da sessão\n' | rofi -dmenu -i -p sessão) || exit 0
+bye="$(dirname "$(readlink -f "$0")")/bye.sh"
 
 case "$choice" in
-	bloquear) i3lock --color=000000 ;;
-	"sair da sessão") i3-msg exit ;;
+	"apagar a tela") "$bye" apagar ;;
+	bloquear) "$bye" bloquear ;;
+	"sair da sessão") "$bye" sair ;;
 esac
